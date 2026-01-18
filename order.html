@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>طلب شراء</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    direction: rtl;
+  }
+
+  form {
+    max-width: 520px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+  }
+
+  .group {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+
+  .group label {
+    font-weight: normal;
+    margin-top: 8px;
+  }
+
+  button {
+    margin-top: 20px;
+    background: #111;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background: #333;
+  }
+</style>
+</head>
+
+<body>
+
+<form id="orderForm">
+  <h2>📝 طلب شراء</h2>
+
+  <!-- بيانات العميل -->
+  <label>الاسم</label>
+  <input name="name" required>
+
+  <label>رقم الموبايل</label>
+  <input name="phone" required>
+
+  <!-- Items -->
+  <label>اختر الأجهزة (Items)</label>
+  <div class="group">
+    <label><input type="checkbox" name="items[]" value="PlayStation 5 Standard"> PlayStation 5 Standard</label>
+    <label><input type="checkbox" name="items[]" value="PlayStation 5 Digital"> PlayStation 5 Digital</label>
+    <label><input type="checkbox" name="items[]" value="PlayStation 4 Slim"> PlayStation 4 Slim</label>
+    <label><input type="checkbox" name="items[]" value="Xbox Series X"> Xbox Series X</label>
+    <label><input type="checkbox" name="items[]" value="Xbox Series S"> Xbox Series S</label>
+    <label><input type="checkbox" name="items[]" value="Nintendo Switch"> Nintendo Switch</label>
+  </div>
+
+  <!-- Accessories -->
+  <label>الإكسسوارات (Accessories)</label>
+  <div class="group">
+    <label><input type="checkbox" name="accessories[]" value="DualSense PS5"> DualSense PS5</label>
+    <label><input type="checkbox" name="accessories[]" value="DualShock PS4"> DualShock PS4</label>
+    <label><input type="checkbox" name="accessories[]" value="Xbox Controller"> Xbox Controller</label>
+    <label><input type="checkbox" name="accessories[]" value="Controller Third-party"> Controller Third-party</label>
+    <label><input type="checkbox" name="accessories[]" value="HyperX Cloud"> HyperX Cloud</label>
+    <label><input type="checkbox" name="accessories[]" value="Razer Kraken"> Razer Kraken</label>
+  </div>
+
+  <button type="submit">إرسال الطلب</button>
+</form>
+
+<script>
+document.getElementById("orderForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = {};
+
+  for (let [key, value] of formData.entries()) {
+    if (key.endsWith("[]")) {
+      const cleanKey = key.replace("[]", "");
+      if (!data[cleanKey]) data[cleanKey] = [];
+      data[cleanKey].push(value);
+    } else {
+      data[key] = value;
+    }
+  }
+
+  await fetch("WEBHOOK_URL", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  alert("✅ تم إرسال الطلب بنجاح");
+  e.target.reset();
+});
+</script>
+
+</body>
+</html>
